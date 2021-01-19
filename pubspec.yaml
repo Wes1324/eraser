@@ -1,0 +1,22 @@
+name: eraser
+description: A flutter plugin that allows remote push notifications to be dismissed and the iOS badge count to be reset.
+version: 1.0.0
+author: Wesley Coffin-Jones <wesleycoffinjones@gmail.com>
+homepage:
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.20.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.wescj.eraser
+        pluginClass: EraserPlugin
+      ios:
+        pluginClass: EraserPlugin
