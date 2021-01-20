@@ -1,16 +1,35 @@
 # eraser_example
 
-Demonstrates how to use the eraser plugin.
+Demonstrates the Eraser plugin in action.<br />
+In terms of Android, this example can run either on an Android emulator or a physical Android device.<br />
+In terms of iOS, this example must be run on a physical device, as push notifications can not be received by the Apple Simulator.
 
-## Getting Started
+## Running the example
 
-This project is a starting point for a Flutter application.
+### Firebase integration
 
-A few resources to get you started if this is your first Flutter project:
+In order for the example to work, integration with Firebase is necessary. Basically, this consists of:
+- Creating a new project in your Firebase console
+- Adding an Android app to that Firebase project and installing the google-services.json file to this example project
+- Adding an iOS app to that Firebase project and installing the GoogleService-Info.plist file to this example project
+More detailed instructions of the firebase integration process, can be found at the following locations on the Firebase website for [Android](https://firebase.google.com/docs/flutter/setup?platform=android) and [iOS](https://firebase.google.com/docs/flutter/setup?platform=ios)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Firebase Cloud Messaging (FCM) REST API
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This example uses the newer v1 FCM REST API, as opposed to the older legacy REST API. For that reason, authentication requires a private key file.<br />
+This can be downloaded by navigating the Project Settings, clicking the 'Service Accounts' tab and clicking the 'Generate new private key' button.<br />
+Once downloaded, this file must be added to the 'privateKey' directory in the example.<br />
+The name of the private key file also needs to be added to the main.dart file. There is a TODO comment in the main.dart file indicating where this must go.<br />
+Additionally, there is another TODO comment in the main.dart file indicating where the project-id must be added.
+
+### Running on iOS
+
+In addition to the above setup, running this example on an iOS device requires further setup. Basically, this consists of:
+- Adding your Apple Developer certificate to Firebase
+- Creating an app id for the example app in your Apple developer account
+- Creating a Provisioning Profile
+More detailed instructions of the firebase integration process, can be found in the [official FlutterFire FCM docs](https://firebase.flutter.dev/docs/messaging/apple-integration)
+
+### Behaviour of example app
+
+Note that upon clicking either the `Send "testOne" notification` or `send "testTwo" notification` button, the app will be moved to the background. This is necessary because by default push notifications received when the app is in the foreground do nothing.
