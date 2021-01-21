@@ -2,7 +2,7 @@
 
 A Flutter plugin that allows notifications and iOS badge counts to be dismissed programmatically.
 
-![Gif demonstrating plugin being used on Android](Android-eraser.gif)
+<img src="Android-eraser.gif" width="360" height="640" />
 
 ## Getting Started
 
