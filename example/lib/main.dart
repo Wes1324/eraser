@@ -11,7 +11,9 @@ import 'package:move_to_background/move_to_background.dart';
 
 const String _testOneTag = "testOne";
 const String _testTwoTag = "testTwo";
-const List<String> _scopes = ["https://www.googleapis.com/auth/firebase.messaging"];
+const List<String> _scopes = [
+  "https://www.googleapis.com/auth/firebase.messaging"
+];
 http.Client _httpClient = http.Client();
 
 void main() async {
@@ -46,11 +48,16 @@ class _MyAppState extends State<MyApp> {
 
   getFCMOauthToken() async {
     // TODO: Place Firebase private key file into privateKey directory and paste filename below
-    String privateKeyFileAsString = await rootBundle.loadString('privatekey/YOUR-PRIVATE-KEY-FILE-NAME.json');
+    String privateKeyFileAsString = await rootBundle
+        .loadString('privatekey/YOUR-PRIVATE-KEY-FILE-NAME.json');
     var privateKeyObject = json.decode(privateKeyFileAsString);
-    ServiceAccountCredentials serviceAccountCredentials = ServiceAccountCredentials.fromJson(privateKeyObject);
-    AccessCredentials accessCredentials = await obtainAccessCredentialsViaServiceAccount(serviceAccountCredentials, _scopes, _httpClient);
-    setState(() => _googleFcmOauthAccessToken = accessCredentials.accessToken.data);
+    ServiceAccountCredentials serviceAccountCredentials =
+        ServiceAccountCredentials.fromJson(privateKeyObject);
+    AccessCredentials accessCredentials =
+        await obtainAccessCredentialsViaServiceAccount(
+            serviceAccountCredentials, _scopes, _httpClient);
+    setState(
+        () => _googleFcmOauthAccessToken = accessCredentials.accessToken.data);
   }
 
   @override
@@ -66,8 +73,10 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text('Number of testOne notifications sent so far: $_testOneNotificationCount'),
-                    Text('Number of testTwo notifications sent so far: $_testTwoNotificationCount'),
+                    Text(
+                        'Number of testOne notifications sent so far: $_testOneNotificationCount'),
+                    Text(
+                        'Number of testTwo notifications sent so far: $_testTwoNotificationCount'),
                     Divider(
                       height: 25.0,
                       color: Colors.black,
@@ -88,7 +97,8 @@ class _MyAppState extends State<MyApp> {
                         // Wait 1 second before actually creating push notification to ensure that app is in background
                         await Future.delayed(
                           Duration(seconds: 1),
-                          () => createPushNotification(_testOneTag, _testOneNotificationCount),
+                          () => createPushNotification(
+                              _testOneTag, _testOneNotificationCount),
                         );
                       },
                     ),
@@ -109,7 +119,8 @@ class _MyAppState extends State<MyApp> {
                         // Wait 1 second before actually creating push notification to ensure that app is in background
                         await Future.delayed(
                           Duration(seconds: 1),
-                          () => createPushNotification(_testTwoTag, _testTwoNotificationCount),
+                          () => createPushNotification(
+                              _testTwoTag, _testTwoNotificationCount),
                         );
                       },
                     ),
@@ -160,7 +171,8 @@ class _MyAppState extends State<MyApp> {
                     RaisedButton(
                       child: Text('Reset badge count, remove notifications'),
                       onPressed: () {
-                        Eraser.resetBadgeCountAndRemoveNotificationsFromCenter();
+                        Eraser
+                            .resetBadgeCountAndRemoveNotificationsFromCenter();
                       },
                     ),
                     SizedBox(height: 12.0),
@@ -220,7 +232,8 @@ class _MyAppState extends State<MyApp> {
       }),
     );
     if (result.statusCode != 200) {
-      print('Request to FCM failed with code ${result.statusCode} and body ${result.body}');
+      print(
+          'Request to FCM failed with code ${result.statusCode} and body ${result.body}');
     }
   }
 
