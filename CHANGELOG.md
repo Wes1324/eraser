@@ -1,3 +1,9 @@
+## 1.0.1
+
+* Use the dartfmt command to format all Dart source code
+* Add some documentation to Dart source code
+* Change src attribute of GIF in readme in an attempt to show GIF correctly on Pub website
+
 ## 1.0.0
 
 Initial version of the plugin.
