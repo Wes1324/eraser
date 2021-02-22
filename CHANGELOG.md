@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Add more information and examples to the README.md file
+
 ## 1.0.1
 
 * Use the dartfmt command to format all Dart source code
