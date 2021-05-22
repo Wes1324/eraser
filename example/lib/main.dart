@@ -28,8 +28,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _deviceToken;
-  String _googleFcmOauthAccessToken;
+  String? _deviceToken;
+  String? _googleFcmOauthAccessToken;
   int _testOneNotificationCount = 0;
   int _testTwoNotificationCount = 0;
 
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getDeviceToken() async {
-    String deviceToken = await FirebaseMessaging.instance.getToken();
+    String? deviceToken = await FirebaseMessaging.instance.getToken();
     setState(() => _deviceToken = deviceToken);
   }
 
@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
                       'Push the button below to send a notification with the "testOne" tag',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Send "testOne" notification'),
                       onPressed: () async {
                         // Need to move app to background in order for firebase messaging to handle the push notification.
@@ -107,7 +107,7 @@ class _MyAppState extends State<MyApp> {
                       'Push the button below to send a notification with the "testTwo" tag',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Send "testTwo" notification'),
                       onPressed: () async {
                         // Need to move app to background in order for firebase messaging to handle the push notification.
@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                       'Push the button below to clear all notifications',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Clear all notifications'),
                       onPressed: () {
                         setState(() {
@@ -144,7 +144,7 @@ class _MyAppState extends State<MyApp> {
                       'Push the button below to clear notifications with the "testOne" tag',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Clear all "testOne" notifications'),
                       onPressed: () {
                         setState(() => _testOneNotificationCount = 0);
@@ -156,7 +156,7 @@ class _MyAppState extends State<MyApp> {
                       'Push the button below to clear notifications with the "testTwo" tag',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Clear all "testTwo" notifications'),
                       onPressed: () {
                         setState(() => _testTwoNotificationCount = 0);
@@ -168,7 +168,7 @@ class _MyAppState extends State<MyApp> {
                       '(iOS only) Push the button below to reset the badge count and delete all notifications from notification center',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Reset badge count, remove notifications'),
                       onPressed: () {
                         Eraser
@@ -180,7 +180,7 @@ class _MyAppState extends State<MyApp> {
                       '(iOS only) Push the button below to reset the badge count but keep all notifications in the notification center',
                       textAlign: TextAlign.center,
                     ),
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text('Reset badge count, keep notifications'),
                       onPressed: () {
                         Eraser.resetBadgeCountButKeepNotificationsInCenter();
@@ -196,7 +196,9 @@ class _MyAppState extends State<MyApp> {
   createPushNotification(String tag, int notificationCount) async {
     http.Response result = await http.post(
       // TODO: Place your project id into the URL below
-      'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send',
+      Uri.parse(
+        'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send',
+      ),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_googleFcmOauthAccessToken',
