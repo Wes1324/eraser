@@ -9,11 +9,11 @@ dependencies:
     sdk: flutter
   eraser:
     path: ../
-  move_to_background: ^1.0.1
-  firebase_core: ^0.7.0
-  firebase_messaging: ^8.0.0-dev.14
-  http: ^0.12.2
-  googleapis_auth: ^0.2.12
+  move_to_background: ^1.0.2
+  firebase_core: ^1.6.0
+  firebase_messaging: ^10.0.6
+  http: ^0.13.3
+  googleapis_auth: ^1.1.0
 
 dev_dependencies:
   flutter_test:

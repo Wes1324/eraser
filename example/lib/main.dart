@@ -194,9 +194,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   createPushNotification(String tag, int notificationCount) async {
+    // TODO: Place your project id into the URL below
+    String firebaseCloudMessagingUrl = 'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send';
+    Uri fcmUri = Uri.parse(firebaseCloudMessagingUrl);
     http.Response result = await http.post(
-      // TODO: Place your project id into the URL below
-      'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send',
+      fcmUri,
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_googleFcmOauthAccessToken',
