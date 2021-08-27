@@ -28,8 +28,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _deviceToken;
-  String _googleFcmOauthAccessToken;
+  String? _deviceToken;
+  String? _googleFcmOauthAccessToken;
   int _testOneNotificationCount = 0;
   int _testTwoNotificationCount = 0;
 
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getDeviceToken() async {
-    String deviceToken = await FirebaseMessaging.instance.getToken();
+    String? deviceToken = await FirebaseMessaging.instance.getToken();
     setState(() => _deviceToken = deviceToken);
   }
 
