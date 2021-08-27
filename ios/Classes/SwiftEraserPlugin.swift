@@ -23,6 +23,9 @@ public class SwiftEraserPlugin: NSObject, FlutterPlugin {
         result(nil)
     } else if(call.method == "resetBadgeCountAndRemoveNotificationsFromCenter") {
         UIApplication.shared.applicationIconBadgeNumber = 0
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        }
         result(nil)
     } else if(call.method == "resetBadgeCountButKeepNotificationsInCenter") {
         UIApplication.shared.applicationIconBadgeNumber = -1
