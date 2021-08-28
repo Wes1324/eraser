@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Migrate to null-safety
+
 ## 1.0.2
 
 * Add more information and examples to the README.md file
