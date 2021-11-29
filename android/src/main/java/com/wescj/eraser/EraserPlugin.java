@@ -2,6 +2,7 @@ package com.wescj.eraser;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.service.notification.StatusBarNotification;
 
 import androidx.annotation.NonNull;
 
@@ -36,7 +37,12 @@ public class EraserPlugin implements FlutterPlugin, MethodCallHandler {
     } else if("clearAppNotificationsByTag".equals(call.method)) {
       String tag = call.argument("tag");
       NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-      notificationManager.cancel(tag, 0);
+      StatusBarNotification[] notifications = notificationManager.getActiveNotifications();
+      for (StatusBarNotification notification : notifications) {
+        if(notification.getTag().equals(tag)){
+          notificationManager.cancel(tag, notification.getId());
+        }
+      }
       result.success(null);
     } else {
       result.notImplemented();
