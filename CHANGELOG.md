@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Remove hardcoded notification id so that all notifications with a certain tag are removed, regardless of their id
+
 ## 2.0.0
 
 * Migrate to null-safety
