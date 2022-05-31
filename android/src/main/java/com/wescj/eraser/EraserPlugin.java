@@ -39,7 +39,7 @@ public class EraserPlugin implements FlutterPlugin, MethodCallHandler {
       NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
       StatusBarNotification[] notifications = notificationManager.getActiveNotifications();
       for (StatusBarNotification notification : notifications) {
-        if(notification.getTag().equals(tag)){
+        if(notification.getTag() != null && notification.getTag().equals(tag)){
           notificationManager.cancel(tag, notification.getId());
         }
       }
