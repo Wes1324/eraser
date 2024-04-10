@@ -1,3 +1,8 @@
+## 2.0.2
+
+* Fix a NullPointerException when trying to clear notifications by tag when there are also notifications that do not have the tag attribute set. Credit to
+  mschudt for submitting the PR.
+
 ## 2.0.1
 
 * Remove hardcoded notification id so that all notifications with a certain tag are removed, regardless of their id
