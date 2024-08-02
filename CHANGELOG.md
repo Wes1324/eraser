@@ -1,3 +1,8 @@
+## 3.0.0
+* Update compileSdk for Android to 34
+* Use Gradle's declarative plugins block
+* Upgrade dependencies
+
 ## 2.0.2
 
 * Fix a NullPointerException when trying to clear notifications by tag when there are also notifications that do not have the tag attribute set. Credit to
