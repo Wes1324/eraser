@@ -9,6 +9,8 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:move_to_background/move_to_background.dart';
 
+import 'firebase_options.dart';
+
 const String _testOneTag = "testOne";
 const String _testTwoTag = "testTwo";
 const List<String> _scopes = [
@@ -18,7 +20,9 @@ http.Client _httpClient = http.Client();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 

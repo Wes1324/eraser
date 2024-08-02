@@ -9,9 +9,8 @@ In terms of iOS, this example must be run on a physical device, as push notifica
 ### Firebase integration
 
 In order for the example to work, integration with Firebase is necessary. Basically, this consists of:
-- Creating a new project in your Firebase console
-- Adding an Android app to that Firebase project and installing the google-services.json file to this example project
-- Adding an iOS app to that Firebase project and installing the GoogleService-Info.plist file to this example project
+- Installing the Firebase CLI
+- Running `flutterfire configure` command in this example project's directory
 More detailed instructions of the firebase integration process, can be found at the following locations on the Firebase website for [Android](https://firebase.google.com/docs/flutter/setup?platform=android) and [iOS](https://firebase.google.com/docs/flutter/setup?platform=ios)
 
 ### Firebase Cloud Messaging (FCM) REST API

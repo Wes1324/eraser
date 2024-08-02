@@ -2,7 +2,8 @@ name: eraser_example
 description: Demonstrates how to use the eraser plugin.
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=3.4.3 <4.0.0'
+  flutter: '>=3.3.0'
 
 dependencies:
   flutter:
@@ -10,10 +11,10 @@ dependencies:
   eraser:
     path: ../
   move_to_background: ^1.0.2
-  firebase_core: ^1.6.0
-  firebase_messaging: ^10.0.6
-  http: ^0.13.3
-  googleapis_auth: ^1.1.0
+  firebase_core: ^3.3.0
+  firebase_messaging: ^15.0.4
+  http: ^1.2.2
+  googleapis_auth: ^1.6.0
 
 dev_dependencies:
   flutter_test:

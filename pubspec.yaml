@@ -1,6 +1,6 @@
 name: eraser
 description: A flutter plugin that allows remote push notifications to be dismissed and the iOS badge count to be reset.
-version: 2.0.2
+version: 3.0.0
 homepage: https://github.com/Wes1324/eraser
 
 environment:
