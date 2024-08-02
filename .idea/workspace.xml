@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="9687f19c-6190-48c3-b537-c26613be1a87" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -7,9 +10,11 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[R58R12LA2SV]" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="1nIGP63UqvtNfXtJk63yX2Ne25m" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -21,7 +26,9 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
+    <property name="cidr.known.project.marker" value="true" />
     <property name="dart.analysis.tool.window.force.activate" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
@@ -29,6 +36,7 @@
     <property name="settings.editor.selected.configurable" value="flutter.settings" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -44,27 +52,5 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.md" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state width="1398" height="499" key="GridCell.Tab.0.bottom" timestamp="1630081327696">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1398" height="499" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630081327696" />
-    <state width="1398" height="499" key="GridCell.Tab.0.center" timestamp="1630081327694">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1398" height="499" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1630081327694" />
-    <state width="1398" height="499" key="GridCell.Tab.0.left" timestamp="1630081327693">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1398" height="499" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1630081327693" />
-    <state width="1398" height="499" key="GridCell.Tab.0.right" timestamp="1630081327695">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1398" height="499" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1630081327695" />
-    <state x="504" y="159" key="RollbackChangesDialog" timestamp="1629906668447">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="504" y="159" key="RollbackChangesDialog/0.0.1440.900@0.0.1440.900" timestamp="1629906668447" />
   </component>
 </project>
