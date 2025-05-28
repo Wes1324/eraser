@@ -37,6 +37,24 @@ class Eraser {
     }
   }
 
+  /// Clears all push notifications that have been received by your Flutter app that container the specified pattern in their [tag].
+  ///
+  /// The tag is specified in the payload of the notification.
+  /// Android notification payloads have a 'tag' property where this should be specified.
+  /// While on iOS, the tag should be placed in the apns-collapse-id header.
+  static Future<void> clearAppNotificationsByTagThatContains(
+      String pattern) async {
+    try {
+      await _channel.invokeMethod(
+          'clearAppNotificationsByTagThatContains', <String, dynamic>{
+        'pattern': pattern,
+      });
+    } on PlatformException catch (e) {
+      print(
+          'Failed to clear app notifications for pattern ($pattern) for following reason: ${e.message}');
+    }
+  }
+
   /// Sets the iOS applicationIconBadgeNumber to 0, thus removing the badge count from the app icon.
   /// Doing this also means that the notifications are removed from the iOS notifications center at the same time.
   ///

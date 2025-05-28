@@ -67,30 +67,63 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 In order to dismiss notifications selectively, the notification needs to include a tag (for Android) and an apns-collapse-id header (for iOS). The below code snippet shows how to do this using a Google Cloud Function written in node.js:
 
 ```javascript
-const notificationTag: string = 'notificationTag';
+const notificationTag: string = "notificationTag";
 
 await admin.messaging().sendMulticast({
-        tokens: deviceTokens,
-        notification: {
-            title: 'Notification Title',
-            body: 'Notification message',
-        },
-        android: {
-            notification: {
-                tag: notificationTag,
-            },
-        },
-        apns: {
-            headers: {
-                'apns-collapse-id': notificationTag,
-            },
-        },
-    });
+  tokens: deviceTokens,
+  notification: {
+    title: "Notification Title",
+    body: "Notification message",
+  },
+  android: {
+    notification: {
+      tag: notificationTag,
+    },
+  },
+  apns: {
+    headers: {
+      "apns-collapse-id": notificationTag,
+    },
+  },
+});
 ```
 
 The `clearAppNotificationsByTag` method can then be used to clear all notifications with that notificationTag.
 
+## Clear by pattern
+
+In case you want to clear "group" of notifications you can use `clearAppNotificationsByTagThatContains`
+
+```
+Eraser.clearAppNotificationsByTagThatContains(idGroup);
+```
+
+That option allows you to create grouped notifications by sending notification with `tag` / `apns-collapse-id` that contains specific pattern and than clean all of them at once
+
+```javascript
+const notificationTag: string = someGroupId + "_" + messageUUid;
+
+await admin.messaging().sendMulticast({
+  tokens: deviceTokens,
+  notification: {
+    title: "Notification Title",
+    body: "Notification message",
+  },
+  android: {
+    notification: {
+      tag: notificationTag,
+    },
+  },
+  apns: {
+    headers: {
+      "apns-collapse-id": notificationTag,
+    },
+  },
+});
+```
+
 ## Badge count
+
 Upon receiving push notifications, iOS devices typically display a red dot on top of the app icon with a number inside. If iOS notifications are dismissed, this badge count remains, so it was necessary to provide some functionality to remove this badge count.<br />
 By default, dismissing the badge count also dismisses all notifications from the iOS notification center. If this is acceptable, use the `resetBadgeCountAndRemoveNotificationsFromCenter` method.<br />
 If however you require the notifications to remain in the notification center after dismissing the badge count, then the `resetBadgeCountButKeepNotificationsInCenter` method should be used.<br />
@@ -98,6 +131,7 @@ If however you require the notifications to remain in the notification center af
 Android 8.0 introduced similar 'badge count' functionality. However Android calls this functionality 'notification badges', and the number inside the badge is known as a 'notification count'. When notifications are dismissed, Android automatically gets rid of the notification count. For this reason, the `resetBadgeCount...` methods do nothing when called on an Android device.
 
 ## iOS compatibility
+
 This plugin is only capable of clearing notifications on iOS devices running iOS 10 or above. The methods will return silently without dismissing notifications if running on devices with iOS 9 or lower. This was deemed acceptable because it seems that the Firebase plugins themselves only support iOS 10 and above.
 
 ## Example app recording
@@ -111,5 +145,6 @@ Ideally, this functionality would be integrated with the FlutterFire Cloud Messa
 That is why I decided to put the 'eraser' functionality in a separate plugin, so that users of the plugin can call it from their main method (to clear notifications when the app is first started) or from a WidgetsBindingObserver (to clear notifications when the app comes back into the foreground), as explained in the Getting Started section above.
 
 ## Tests
+
 This plugin is quite simple and just delegates to platform-specific code in order to provide its functionality. This platform-specific code should already be tested by Google and Apple. For that reason, there isn't really anything to test and the plugin has no unit tests.<br />
 If anyone can think of any possible unit tests, then feel free to suggest them, or open a pull request.
