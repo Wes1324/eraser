@@ -18,4 +18,4 @@ flutter:
         package: com.wescj.eraser
         pluginClass: EraserPlugin
       ios:
-        pluginClass: EraserPlugin
+        pluginClass: SwiftEraserPlugin
