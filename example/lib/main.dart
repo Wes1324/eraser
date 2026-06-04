@@ -1,252 +1,186 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:eraser/eraser.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:http/http.dart' as http;
-import 'package:move_to_background/move_to_background.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'firebase_options.dart';
+final FlutterLocalNotificationsPlugin _notifications =
+    FlutterLocalNotificationsPlugin();
 
-const String _testOneTag = "testOne";
-const String _testTwoTag = "testTwo";
-const List<String> _scopes = [
-  "https://www.googleapis.com/auth/firebase.messaging"
-];
-http.Client _httpClient = http.Client();
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+
+  await _notifications.initialize(
+    settings: const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      ),
+    ),
   );
-  runApp(MyApp());
+
+  runApp(const EraserExampleApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String? _deviceToken;
-  String? _googleFcmOauthAccessToken;
-  int _testOneNotificationCount = 0;
-  int _testTwoNotificationCount = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseMessaging.instance.requestPermission();
-    getDeviceToken();
-    getFCMOauthToken();
-  }
-
-  getDeviceToken() async {
-    String? deviceToken = await FirebaseMessaging.instance.getToken();
-    setState(() => _deviceToken = deviceToken);
-  }
-
-  getFCMOauthToken() async {
-    // TODO: Place Firebase private key file into privateKey directory and paste filename below
-    String privateKeyFileAsString = await rootBundle
-        .loadString('privatekey/YOUR-PRIVATE-KEY-FILE-NAME.json');
-    var privateKeyObject = json.decode(privateKeyFileAsString);
-    ServiceAccountCredentials serviceAccountCredentials =
-        ServiceAccountCredentials.fromJson(privateKeyObject);
-    AccessCredentials accessCredentials =
-        await obtainAccessCredentialsViaServiceAccount(
-            serviceAccountCredentials, _scopes, _httpClient);
-    setState(
-        () => _googleFcmOauthAccessToken = accessCredentials.accessToken.data);
-  }
+class EraserExampleApp extends StatelessWidget {
+  const EraserExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Eraser plugin example app'),
-        ),
-        body: _deviceToken == null || _googleFcmOauthAccessToken == null
-            ? Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
-                        'Number of testOne notifications sent so far: $_testOneNotificationCount'),
-                    Text(
-                        'Number of testTwo notifications sent so far: $_testTwoNotificationCount'),
-                    Divider(
-                      height: 25.0,
-                      color: Colors.black,
-                    ),
-                    Text(
-                      'Push the button below to send a notification with the "testOne" tag',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Send "testOne" notification'),
-                      onPressed: () async {
-                        // Need to move app to background in order for firebase messaging to handle the push notification.
-                        // Push notifications received while app is in foreground do nothing.
-                        MoveToBackground.moveTaskToBack();
-
-                        setState(() => _testOneNotificationCount++);
-
-                        // Wait 1 second before actually creating push notification to ensure that app is in background
-                        await Future.delayed(
-                          Duration(seconds: 1),
-                          () => createPushNotification(
-                              _testOneTag, _testOneNotificationCount),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      'Push the button below to send a notification with the "testTwo" tag',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Send "testTwo" notification'),
-                      onPressed: () async {
-                        // Need to move app to background in order for firebase messaging to handle the push notification.
-                        // Push notifications received while app is in foreground do nothing.
-                        MoveToBackground.moveTaskToBack();
-
-                        setState(() => _testTwoNotificationCount++);
-
-                        // Wait 1 second before actually creating push notification to ensure that app is in background
-                        await Future.delayed(
-                          Duration(seconds: 1),
-                          () => createPushNotification(
-                              _testTwoTag, _testTwoNotificationCount),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      'Push the button below to clear all notifications',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Clear all notifications'),
-                      onPressed: () {
-                        setState(() {
-                          _testOneNotificationCount = 0;
-                          _testTwoNotificationCount = 0;
-                        });
-                        Eraser.clearAllAppNotifications();
-                      },
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      'Push the button below to clear notifications with the "testOne" tag',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Clear all "testOne" notifications'),
-                      onPressed: () {
-                        setState(() => _testOneNotificationCount = 0);
-                        Eraser.clearAppNotificationsByTag(_testOneTag);
-                      },
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      'Push the button below to clear notifications with the "testTwo" tag',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Clear all "testTwo" notifications'),
-                      onPressed: () {
-                        setState(() => _testTwoNotificationCount = 0);
-                        Eraser.clearAppNotificationsByTag(_testTwoTag);
-                      },
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      '(iOS only) Push the button below to reset the badge count and delete all notifications from notification center',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Reset badge count, remove notifications'),
-                      onPressed: () {
-                        Eraser
-                            .resetBadgeCountAndRemoveNotificationsFromCenter();
-                      },
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      '(iOS only) Push the button below to reset the badge count but keep all notifications in the notification center',
-                      textAlign: TextAlign.center,
-                    ),
-                    ElevatedButton(
-                      child: Text('Reset badge count, keep notifications'),
-                      onPressed: () {
-                        Eraser.resetBadgeCountButKeepNotificationsInCenter();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-      ),
+      title: 'Eraser example',
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const EraserHomePage(),
     );
   }
+}
 
-  createPushNotification(String tag, int notificationCount) async {
-    // TODO: Place your project id into the URL below
-    String firebaseCloudMessagingUrl =
-        'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send';
-    Uri fcmUri = Uri.parse(firebaseCloudMessagingUrl);
-    http.Response result = await http.post(
-      fcmUri,
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_googleFcmOauthAccessToken',
-      },
-      body: jsonEncode({
-        'message': {
-          'token': _deviceToken,
-          'notification': {
-            'title': 'Eraser',
-            'body': 'This notification has the $tag tag',
-          },
-          'android': {
-            'notification': {
-              'tag': tag,
-              // Android remembers previous notification count and simply adds the value to the previous cumulative notification count value.
-              // This is different to the iOS behaviour (see comment below on 'apns.payload.aps.badge' field)
-              'notification_count': notificationCount,
-            },
-          },
-          'apns': {
-            'headers': {
-              'apns-collapse-id': tag,
-            },
-            'payload': {
-              'aps': {
-                // In contrast to Android (see comment above on 'android.notification.notification_count' field'), iOS disregards
-                // previous notification counts and simple displays what is in the payload.
-                'badge': _testOneNotificationCount + _testTwoNotificationCount,
-              },
-            }
-          }
-        }
-      }),
-    );
-    if (result.statusCode != 200) {
-      print(
-          'Request to FCM failed with code ${result.statusCode} and body ${result.body}');
-    }
-  }
+class EraserHomePage extends StatefulWidget {
+  const EraserHomePage({super.key});
+
+  @override
+  State<EraserHomePage> createState() => _EraserHomePageState();
+}
+
+class _EraserHomePageState extends State<EraserHomePage> {
+  final TextEditingController _tagController =
+      TextEditingController(text: '1');
 
   @override
   void dispose() {
-    _httpClient.close();
+    _tagController.dispose();
     super.dispose();
+  }
+
+  void _notify(String message) {
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS) {
+      await _notifications
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    } else if (Platform.isAndroid) {
+      await _notifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+    }
+  }
+
+  /// Posts a delivered notification whose identifier equals [tag], so that
+  /// [Eraser.clearAppNotificationsByTag] can target it. On iOS the notification
+  /// identifier is the integer id; on Android the tag is set explicitly.
+  Future<void> _postNotification() async {
+    await _requestPermissions();
+    final tag = _tagController.text.trim().isEmpty
+        ? '1'
+        : _tagController.text.trim();
+    final id = int.tryParse(tag) ?? tag.hashCode;
+
+    await _notifications.show(
+      id: id,
+      title: 'Eraser test notification',
+      body: 'Tag "$tag" — clear it with the buttons below.',
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(
+          'eraser_demo',
+          'Eraser demo',
+          channelDescription: 'Test notifications for the eraser example',
+          tag: tag,
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBanner: true,
+          presentList: true,
+          badgeNumber: 1,
+        ),
+      ),
+    );
+    _notify('Posted notification with tag "$tag".');
+  }
+
+  Future<void> _clearAll() async {
+    await Eraser.clearAllAppNotifications();
+    _notify('Cleared all app notifications.');
+  }
+
+  Future<void> _clearByTag() async {
+    final tag = _tagController.text.trim();
+    if (tag.isEmpty) {
+      _notify('Enter a tag first.');
+      return;
+    }
+    await Eraser.clearAppNotificationsByTag(tag);
+    _notify('Cleared notifications with tag "$tag".');
+  }
+
+  Future<void> _resetBadgeAndRemove() async {
+    await Eraser.resetBadgeCountAndRemoveNotificationsFromCenter();
+    _notify('Reset badge count and removed notifications.');
+  }
+
+  Future<void> _resetBadgeKeep() async {
+    await Eraser.resetBadgeCountButKeepNotificationsInCenter();
+    _notify('Reset badge count, kept notifications.');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Eraser example')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListView(
+          children: [
+            FilledButton(
+              onPressed: _postNotification,
+              child: const Text('Post test notification'),
+            ),
+            const Divider(height: 32),
+            FilledButton.tonal(
+              onPressed: _clearAll,
+              child: const Text('Clear all notifications'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _tagController,
+              decoration: const InputDecoration(
+                labelText: 'Notification tag',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            FilledButton.tonal(
+              onPressed: _clearByTag,
+              child: const Text('Clear notifications by tag'),
+            ),
+            if (Platform.isIOS) ...[
+              const Divider(height: 32),
+              const Text(
+                'iOS badge count',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.tonal(
+                onPressed: _resetBadgeAndRemove,
+                child: const Text('Reset badge & remove notifications'),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.tonal(
+                onPressed: _resetBadgeKeep,
+                child: const Text('Reset badge, keep notifications'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
