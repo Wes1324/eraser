@@ -98,17 +98,15 @@ If however you require the notifications to remain in the notification center af
 Android 8.0 introduced similar 'badge count' functionality. However Android calls this functionality 'notification badges', and the number inside the badge is known as a 'notification count'. When notifications are dismissed, Android automatically gets rid of the notification count. For this reason, the `resetBadgeCount...` methods do nothing when called on an Android device.
 
 ## iOS compatibility
-This plugin is only capable of clearing notifications on iOS devices running iOS 10 or above. The methods will return silently without dismissing notifications if running on devices with iOS 9 or lower. This was deemed acceptable because it seems that the Firebase plugins themselves only support iOS 10 and above.
+As of version 3.1.0 the iOS plugin is Swift-only and requires a minimum deployment target of iOS 13.0. It can be consumed via Swift Package Manager (a `Package.swift` is provided) or CocoaPods (via the podspec) — Flutter selects whichever your project uses.
 
 ## Example app recording
 
-<img src="https://github.com/Wes1324/eraser/raw/main/Android-eraser.gif" alt="GIF showing the plugin being used on Android" width="360" height="640" />
+The [example app](example) demonstrates each method. On iOS, posting a test
+notification sets the app icon badge; the eraser methods then clear the
+notifications and reset the badge count:
 
-## Possible integration with the FlutterFire plugin
-
-Ideally, this functionality would be integrated with the FlutterFire Cloud Messaging plugin. The problem is that the 'eraser' functionality needs to be called at certain points in the app lifecycle (i.e. when the app is first opened and/or when the app is brought into the foreground from the background). The FlutterFire plugin does not currently seem to be aware of the app lifecycle in this way.<br />
-
-That is why I decided to put the 'eraser' functionality in a separate plugin, so that users of the plugin can call it from their main method (to clear notifications when the app is first started) or from a WidgetsBindingObserver (to clear notifications when the app comes back into the foreground), as explained in the Getting Started section above.
+<img src="iOS-eraser.gif" alt="GIF showing the plugin being used on iOS" width="300" height="652" />
 
 ## Tests
 This plugin is quite simple and just delegates to platform-specific code in order to provide its functionality. This platform-specific code should already be tested by Google and Apple. For that reason, there isn't really anything to test and the plugin has no unit tests.<br />
