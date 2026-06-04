@@ -1,34 +1,27 @@
 # eraser_example
 
-Demonstrates the Eraser plugin in action.<br />
-In terms of Android, this example can run either on an Android emulator or a physical Android device.<br />
-In terms of iOS, this example must be run on a physical device, as push notifications can not be received by the Apple Simulator.
+Demonstrates the Eraser plugin in action. It runs on an Android emulator/device
+or an iOS simulator/device — no Firebase or remote-push setup required.
 
 ## Running the example
 
-### Firebase integration
+```sh
+flutter pub get
+flutter run
+```
 
-In order for the example to work, integration with Firebase is necessary. Basically, this consists of:
-- Installing the Firebase CLI
-- Running `flutterfire configure` command in this example project's directory
-More detailed instructions of the firebase integration process, can be found at the following locations on the Firebase website for [Android](https://firebase.google.com/docs/flutter/setup?platform=android) and [iOS](https://firebase.google.com/docs/flutter/setup?platform=ios)
+## What it shows
 
-### Firebase Cloud Messaging (FCM) REST API
+- **Post test notification** — uses `flutter_local_notifications` to deliver a
+  local notification (and set the iOS badge), so there is something for the
+  eraser methods to clear. The notification's identifier matches the value in
+  the tag field. On iOS, the badge appears on the home-screen app icon.
+- **Clear all notifications** — `Eraser.clearAllAppNotifications()`
+- **Clear notifications by tag** — `Eraser.clearAppNotificationsByTag(tag)`
+- **Reset badge & remove notifications** (iOS) — `Eraser.resetBadgeCountAndRemoveNotificationsFromCenter()`
+- **Reset badge, keep notifications** (iOS) — `Eraser.resetBadgeCountButKeepNotificationsInCenter()`
 
-This example uses the newer v1 FCM REST API, as opposed to the older legacy REST API. For that reason, authentication requires a private key file.<br />
-This can be downloaded by navigating the Project Settings, clicking the 'Service Accounts' tab and clicking the 'Generate new private key' button.<br />
-Once downloaded, this file must be added to the 'privateKey' directory in the example.<br />
-The name of the private key file also needs to be added to the main.dart file. There is a TODO comment in the main.dart file indicating where this must go.<br />
-Additionally, there is another TODO comment in the main.dart file indicating where the project-id must be added.
-
-### Running on iOS
-
-In addition to the above setup, running this example on an iOS device requires further setup. Basically, this consists of:
-- Adding your Apple Developer certificate to Firebase
-- Creating an app id for the example app in your Apple developer account
-- Creating a Provisioning Profile
-More detailed instructions of the firebase integration process, can be found in the [official FlutterFire FCM docs](https://firebase.flutter.dev/docs/messaging/apple-integration)
-
-### Behaviour of example app
-
-Note that upon clicking either the `Send "testOne" notification` or `send "testTwo" notification` button, the app will be moved to the background. This is necessary because by default push notifications received when the app is in the foreground do nothing.
+Typical flow: tap **Post test notification** (allow notifications when
+prompted), then use a clear/reset button to dismiss it. On iOS, send the app to
+the background to see the badge on the app icon. The local notifications here
+stand in for the remote push notifications this plugin is designed to clear.
