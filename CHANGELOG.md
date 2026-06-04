@@ -1,4 +1,13 @@
+# CHANGELOG
+
+## 3.1.0
+
+* Add Swift Package Manager support for iOS (CocoaPods still supported)
+* Convert the iOS plugin to Swift-only (removed the Objective-C bridge)
+* Raise the iOS minimum deployment target to 13.0
+
 ## 3.0.0
+
 * Update compileSdk for Android to 34
 * Use Gradle's declarative plugins block
 * Upgrade dependencies
@@ -29,5 +38,6 @@
 ## 1.0.0
 
 Initial version of the plugin.
+
 * Clear all notifications received by your Flutter app, or selected notifications based on a tag
 * Clear the iOS badge count, with the option to remove or retain notifications in the notification center
