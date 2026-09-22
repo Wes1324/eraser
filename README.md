@@ -100,6 +100,21 @@ Android 8.0 introduced similar 'badge count' functionality. However Android call
 ## iOS compatibility
 This plugin is only capable of clearing notifications on iOS devices running iOS 10 or above. The methods will return silently without dismissing notifications if running on devices with iOS 9 or lower. This was deemed acceptable because it seems that the Firebase plugins themselves only support iOS 10 and above.
 
+## iOS integration (Swift Package Manager)
+
+The iOS side of this plugin is a Swift package (`ios/eraser/Package.swift`), so it is picked up by
+[Swift Package Manager](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
+as soon as your app has it enabled:
+
+```sh
+flutter config --enable-swift-package-manager
+```
+
+Because the package declares a dependency on the `FlutterFramework` Swift package, the Swift Package Manager
+route requires Flutter 3.44 or above. CocoaPods is still fully supported through `ios/eraser.podspec`, so apps
+that have not enabled Swift Package Manager (or that are on an older Flutter version) keep working with no
+changes required.
+
 ## Example app recording
 
 <img src="https://github.com/Wes1324/eraser/raw/main/Android-eraser.gif" alt="GIF showing the plugin being used on Android" width="360" height="640" />
