@@ -1,18 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:eraser/eraser.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
-import 'package:move_to_background/move_to_background.dart';
 
 import 'firebase_options.dart';
 
 const String _testOneTag = "testOne";
 const String _testTwoTag = "testTwo";
+const MethodChannel _appChannel = MethodChannel('com.wescj.eraser_example/app');
 const List<String> _scopes = [
   "https://www.googleapis.com/auth/firebase.messaging"
 ];
@@ -22,6 +24,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
   );
   runApp(MyApp());
 }
@@ -36,12 +43,21 @@ class _MyAppState extends State<MyApp> {
   String? _googleFcmOauthAccessToken;
   int _testOneNotificationCount = 0;
   int _testTwoNotificationCount = 0;
+  StreamSubscription<RemoteMessage>? _messageSubscription;
 
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.instance.requestPermission();
-    getDeviceToken();
+    FirebaseMessaging.instance.requestPermission().then((settings) {
+      debugPrint('Notification permission: ${settings.authorizationStatus}');
+    });
+    _messageSubscription = FirebaseMessaging.onMessage.listen((message) {
+      debugPrint('FCM received in foreground: ${message.messageId}');
+    });
+    // Wait 5 seconds to ensure APNSToken is present. See https://github.com/firebase/flutterfire/issues/12244
+    Future.delayed(Duration(seconds: 5), () {
+      getDeviceToken();
+    });
     getFCMOauthToken();
   }
 
@@ -52,16 +68,11 @@ class _MyAppState extends State<MyApp> {
 
   getFCMOauthToken() async {
     // TODO: Place Firebase private key file into privateKey directory and paste filename below
-    String privateKeyFileAsString = await rootBundle
-        .loadString('privatekey/YOUR-PRIVATE-KEY-FILE-NAME.json');
+    String privateKeyFileAsString = await rootBundle.loadString('privatekey/YOUR-PRIVATE-KEY-FILE-NAME.json');
     var privateKeyObject = json.decode(privateKeyFileAsString);
-    ServiceAccountCredentials serviceAccountCredentials =
-        ServiceAccountCredentials.fromJson(privateKeyObject);
-    AccessCredentials accessCredentials =
-        await obtainAccessCredentialsViaServiceAccount(
-            serviceAccountCredentials, _scopes, _httpClient);
-    setState(
-        () => _googleFcmOauthAccessToken = accessCredentials.accessToken.data);
+    ServiceAccountCredentials serviceAccountCredentials = ServiceAccountCredentials.fromJson(privateKeyObject);
+    AccessCredentials accessCredentials = await obtainAccessCredentialsViaServiceAccount(serviceAccountCredentials, _scopes, _httpClient);
+    setState(() => _googleFcmOauthAccessToken = accessCredentials.accessToken.data);
   }
 
   @override
@@ -77,10 +88,8 @@ class _MyAppState extends State<MyApp> {
                 padding: EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text(
-                        'Number of testOne notifications sent so far: $_testOneNotificationCount'),
-                    Text(
-                        'Number of testTwo notifications sent so far: $_testTwoNotificationCount'),
+                    Text('Number of testOne notifications sent so far: $_testOneNotificationCount'),
+                    Text('Number of testTwo notifications sent so far: $_testTwoNotificationCount'),
                     Divider(
                       height: 25.0,
                       color: Colors.black,
@@ -92,18 +101,8 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                       child: Text('Send "testOne" notification'),
                       onPressed: () async {
-                        // Need to move app to background in order for firebase messaging to handle the push notification.
-                        // Push notifications received while app is in foreground do nothing.
-                        MoveToBackground.moveTaskToBack();
-
                         setState(() => _testOneNotificationCount++);
-
-                        // Wait 1 second before actually creating push notification to ensure that app is in background
-                        await Future.delayed(
-                          Duration(seconds: 1),
-                          () => createPushNotification(
-                              _testOneTag, _testOneNotificationCount),
-                        );
+                        await sendTestNotification(_testOneTag, _testOneNotificationCount);
                       },
                     ),
                     SizedBox(height: 12.0),
@@ -114,18 +113,8 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                       child: Text('Send "testTwo" notification'),
                       onPressed: () async {
-                        // Need to move app to background in order for firebase messaging to handle the push notification.
-                        // Push notifications received while app is in foreground do nothing.
-                        MoveToBackground.moveTaskToBack();
-
                         setState(() => _testTwoNotificationCount++);
-
-                        // Wait 1 second before actually creating push notification to ensure that app is in background
-                        await Future.delayed(
-                          Duration(seconds: 1),
-                          () => createPushNotification(
-                              _testTwoTag, _testTwoNotificationCount),
-                        );
+                        await sendTestNotification(_testTwoTag, _testTwoNotificationCount);
                       },
                     ),
                     SizedBox(height: 12.0),
@@ -175,8 +164,7 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                       child: Text('Reset badge count, remove notifications'),
                       onPressed: () {
-                        Eraser
-                            .resetBadgeCountAndRemoveNotificationsFromCenter();
+                        Eraser.resetBadgeCountAndRemoveNotificationsFromCenter();
                       },
                     ),
                     SizedBox(height: 12.0),
@@ -197,10 +185,28 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  createPushNotification(String tag, int notificationCount) async {
+  Future<void> sendTestNotification(String tag, int notificationCount) async {
+    try {
+      // On Android, the app has to be in the background in order for firebase
+      // messaging to handle the push notification. Push notifications received
+      // while the app is in the foreground on Android do nothing.
+      //
+      // No need to move app to background on iOS as
+      // setForegroundNotificationPresentationOptions was called above.
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        await _appChannel.invokeMethod<void>('moveTaskToBack');
+        // Wait 1 second before actually creating push notification to ensure that app is in background
+        await Future<void>.delayed(const Duration(seconds: 1));
+      }
+      await createPushNotification(tag, notificationCount);
+    } catch (error) {
+      debugPrint('FCM send failed: $error');
+    }
+  }
+
+  Future<void> createPushNotification(String tag, int notificationCount) async {
     // TODO: Place your project id into the URL below
-    String firebaseCloudMessagingUrl =
-        'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send';
+    String firebaseCloudMessagingUrl = 'https://fcm.googleapis.com/v1/projects/YOUR-PROJECT-ID/messages:send';
     Uri fcmUri = Uri.parse(firebaseCloudMessagingUrl);
     http.Response result = await http.post(
       fcmUri,
@@ -237,15 +243,13 @@ class _MyAppState extends State<MyApp> {
           }
         }
       }),
-    );
-    if (result.statusCode != 200) {
-      print(
-          'Request to FCM failed with code ${result.statusCode} and body ${result.body}');
-    }
+    ).timeout(const Duration(seconds: 20));
+    debugPrint('FCM response ${result.statusCode}: ${result.body}');
   }
 
   @override
   void dispose() {
+    _messageSubscription?.cancel();
     _httpClient.close();
     super.dispose();
   }
