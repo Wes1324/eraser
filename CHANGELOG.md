@@ -1,3 +1,8 @@
+## 3.1.0
+* Add Swift Package Manager support for iOS (CocoaPods is still supported)
+* Merge the Objective-C plugin shim into a single Swift `EraserPlugin` class
+* Raise the minimum iOS deployment target of the plugin to 12.0
+
 ## 3.0.0
 * Update compileSdk for Android to 34
 * Use Gradle's declarative plugins block

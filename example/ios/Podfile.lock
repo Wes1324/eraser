@@ -1,6 +1,4 @@
 PODS:
-  - eraser (0.0.1):
-    - Flutter
   - Firebase/CoreOnly (10.29.0):
     - FirebaseCore (= 10.29.0)
   - Firebase/Messaging (10.29.0):
@@ -73,7 +71,6 @@ PODS:
   - PromisesObjC (2.4.0)
 
 DEPENDENCIES:
-  - eraser (from `.symlinks/plugins/eraser/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -92,8 +89,6 @@ SPEC REPOS:
     - PromisesObjC
 
 EXTERNAL SOURCES:
-  eraser:
-    :path: ".symlinks/plugins/eraser/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_messaging:
@@ -104,21 +99,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/move_to_background/ios"
 
 SPEC CHECKSUMS:
-  eraser: 23d701c0ff53a9d042581459b752fd76a6ad6ca4
   Firebase: cec914dab6fd7b1bd8ab56ea07ce4e03dd251c2d
-  firebase_core: 57aeb91680e5d5e6df6b888064be7c785f146efb
-  firebase_messaging: c862b3d2b973ecc769194dc8de09bd22c77ae757
+  firebase_core: f64256ea691bd1ea685b1390e7ed411f8195be0f
+  firebase_messaging: 5c4993d0df2ef71c802ad3ec76abed64edcd9feb
   FirebaseCore: 30e9c1cbe3d38f5f5e75f48bfcea87d7c358ec16
   FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
   FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
   FirebaseMessaging: 7b5d8033e183ab59eb5b852a53201559e976d366
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
-  move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
+  move_to_background: 155f7bfbd34d43ad847cb630d2d2d87c17199710
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: d2243213672c3c48aae53c36642ba411a6be7309
+PODFILE CHECKSUM: cdddfa9a860416e122205d962ea41bf3029a8aaa
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
